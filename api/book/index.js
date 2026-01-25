@@ -26,14 +26,32 @@ module.exports = async function (context, req) {
         ORDER BY i.PageNumber
       `);
 
-    context.res = {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: result.recordset
-    };
+    const rows = result.recordset;
+    if (!rows || rows.length === 0) {
+  context.res = {
+    status: 404,
+    headers: { "Content-Type": "application/json" },
+    body: { error: "Book not found" }
+  };
+  return;
+}
+
+
+context.res = {
+  status: 200,
+  headers: { "Content-Type": "application/json" },
+  body: {
+    title: rows[0].Title,
+    pages: rows.map(r => ({
+      pageNumber: r.PageNumber,
+      fileUrl: r.FileUrl
+    }))
+  }
+};
+
   } catch (err) {
     context.log.error(err);
-    
+
     context.res = {
       status: 500,
       headers: { "Content-Type": "application/json" },
