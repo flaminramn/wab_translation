@@ -1,7 +1,7 @@
 {
-  "name": "api",
+  "name": "book-db-web",
   "version": "1.0.0",
-  "dependencies": {
-    "mssql": "^9.1.1"
+  "scripts": {
+    "build": "echo no build required"
   }
 }
