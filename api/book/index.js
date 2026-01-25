@@ -3,6 +3,15 @@ const sql = require("mssql");
 module.exports = async function (context, req) {
   const bookId = context.bindingData.bookId;
 
+  if (!bookId) {
+    context.res = {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+      body: { error: "bookId required" }
+    };
+    return;
+  }
+
   try {
     const pool = await sql.connect(process.env.SQL_CONNECTION_STRING);
 
@@ -17,31 +26,16 @@ module.exports = async function (context, req) {
         ORDER BY i.PageNumber
       `);
 
-    if (result.recordset.length === 0) {
-      context.res = {
-        status: 404,
-        body: "Not found"
-      };
-      return;
-    }
-
     context.res = {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: {
-        title: result.recordset[0].Title,
-        pages: result.recordset.map(row => ({
-          pageNumber: row.PageNumber,
-          fileUrl: row.FileUrl
-        }))
-      }
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+      body: result.recordset
     };
   } catch (err) {
-    context.log(err);
     context.res = {
       status: 500,
-      body: "Server error"
+      headers: { "Content-Type": "application/json" },
+      body: { error: err.message }
     };
   }
 };
