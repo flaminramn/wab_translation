@@ -1,6 +1,7 @@
 const bookId = 1;
 
-fetch("https://wab-app-db-e7b9ckf2endefye3.westus2-01.azurewebsites.net")
+
+fetch(`https://wab-app-db-e7b9ckf2endefye3.westus2-01.azurewebsites.net/api/book/${bookId}`)
   .then(r => {
     if (!r.ok) {
       throw new Error("API failed with status " + r.status);
