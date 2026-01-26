@@ -1,6 +1,6 @@
 const bookId = 1;
 
-fetch(`/api/book/${bookId}`)
+fetch(`https://YOUR-FUNCTION-APP.azurewebsites.net/api/book/${bookId}`)
   .then(r => {
     if (!r.ok) {
       throw new Error("API failed with status " + r.status);

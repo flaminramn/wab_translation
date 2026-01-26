@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "book/{bookId?}",
+      "route": "book/{bookId:int}",
       "methods": ["get"]
     },
     {

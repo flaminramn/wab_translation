@@ -12,12 +12,37 @@ module.exports = async function (context, req) {
     return;
   }
 
+  const id = Number(bookId);
+  if (!Number.isInteger(id) || id <= 0) {
+    context.res = {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+      body: { error: "Invalid bookId" }
+    };
+    return;
+  }
+
+  const connStr = process.env.SQL_CONNECTION_STRING;
+
+  // SAFE. context exists here.
+  context.log("Conn string present:", !!connStr);
+
+  if (!connStr) {
+    context.res = {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+      body: { error: "SQL_CONNECTION_STRING not set" }
+    };
+    return;
+  }
+
+  let pool;
   try {
-    const pool = await sql.connect(process.env.SQL_CONNECTION_STRING);
+    pool = await sql.connect(connStr);
 
     const result = await pool
       .request()
-      .input("BookId", sql.Int, bookId)
+      .input("BookId", sql.Int, id)
       .query(`
         SELECT b.Title, i.PageNumber, i.FileUrl
         FROM dbo.Books b
@@ -26,36 +51,38 @@ module.exports = async function (context, req) {
         ORDER BY i.PageNumber
       `);
 
-    const rows = result.recordset;
-    if (!rows || rows.length === 0) {
-  context.res = {
-    status: 404,
-    headers: { "Content-Type": "application/json" },
-    body: { error: "Book not found" }
-  };
-  return;
-}
+    if (!result.recordset.length) {
+      context.res = {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+        body: { error: "Book not found" }
+      };
+      return;
+    }
 
-
-context.res = {
-  status: 200,
-  headers: { "Content-Type": "application/json" },
-  body: {
-    title: rows[0].Title,
-    pages: rows.map(r => ({
-      pageNumber: r.PageNumber,
-      fileUrl: r.FileUrl
-    }))
-  }
-};
-
+    context.res = {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+      body: {
+        title: result.recordset[0].Title,
+        pages: result.recordset.map(r => ({
+          pageNumber: r.PageNumber,
+          fileUrl: r.FileUrl
+        }))
+      }
+    };
   } catch (err) {
     context.log.error(err);
-
     context.res = {
       status: 500,
       headers: { "Content-Type": "application/json" },
       body: { error: err.message }
     };
+  } finally {
+    if (pool) {
+      try { await pool.close(); } catch {}
+    }
   }
 };
+
+
