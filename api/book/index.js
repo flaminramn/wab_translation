@@ -1,5 +1,14 @@
 const sql = require("mssql");
 
+let pool;
+
+async function getPool() {
+  if (pool) return pool;
+
+  pool = await sql.connect(process.env.SQL_CONNECTION_STRING);
+  return pool;
+}
+
 module.exports = async function (context, req) {
   const bookId = context.bindingData.bookId;
 
@@ -11,17 +20,16 @@ module.exports = async function (context, req) {
     return;
   }
 
-  try {
-    const conn = process.env.SQL_CONNECTION_STRING;
-    if (!conn) {
-      context.res = {
-        status: 500,
-        body: { error: "SQL_CONNECTION_STRING not set" }
-      };
-      return;
-    }
+  if (!process.env.SQL_CONNECTION_STRING) {
+    context.res = {
+      status: 500,
+      body: { error: "SQL_CONNECTION_STRING not set" }
+    };
+    return;
+  }
 
-    const pool = await sql.connect(conn);
+  try {
+    const pool = await getPool();
 
     const result = await pool.request()
       .input("BookId", sql.Int, bookId)
@@ -33,7 +41,7 @@ module.exports = async function (context, req) {
         ORDER BY i.PageNumber
       `);
 
-    if (!result.recordset.length) {
+    if (result.recordset.length === 0) {
       context.res = {
         status: 404,
         body: { error: "Book not found" }
@@ -52,7 +60,7 @@ module.exports = async function (context, req) {
       }
     };
   } catch (err) {
-    context.log(err);
+    context.log("SQL ERROR:", err);
     context.res = {
       status: 500,
       body: { error: err.message }
