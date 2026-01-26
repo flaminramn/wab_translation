@@ -5,8 +5,10 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get"],
-      "route": "book/{bookId?}"
+      "methods": [
+        "get",
+        "post"
+      ]
     },
     {
       "type": "http",

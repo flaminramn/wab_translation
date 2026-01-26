@@ -6,43 +6,25 @@ module.exports = async function (context, req) {
   if (!bookId) {
     context.res = {
       status: 400,
-      headers: { "Content-Type": "application/json" },
       body: { error: "bookId required" }
     };
     return;
   }
 
-  const id = Number(bookId);
-  if (!Number.isInteger(id) || id <= 0) {
-    context.res = {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-      body: { error: "Invalid bookId" }
-    };
-    return;
-  }
-
-  const connStr = process.env.SQL_CONNECTION_STRING;
-
-  // SAFE. context exists here.
-  context.log("Conn string present:", !!connStr);
-
-  if (!connStr) {
-    context.res = {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-      body: { error: "SQL_CONNECTION_STRING not set" }
-    };
-    return;
-  }
-
-  let pool;
   try {
-    pool = await sql.connect(connStr);
+    const conn = process.env.SQL_CONNECTION_STRING;
+    if (!conn) {
+      context.res = {
+        status: 500,
+        body: { error: "SQL_CONNECTION_STRING not set" }
+      };
+      return;
+    }
 
-    const result = await pool
-      .request()
-      .input("BookId", sql.Int, id)
+    const pool = await sql.connect(conn);
+
+    const result = await pool.request()
+      .input("BookId", sql.Int, bookId)
       .query(`
         SELECT b.Title, i.PageNumber, i.FileUrl
         FROM dbo.Books b
@@ -54,7 +36,6 @@ module.exports = async function (context, req) {
     if (!result.recordset.length) {
       context.res = {
         status: 404,
-        headers: { "Content-Type": "application/json" },
         body: { error: "Book not found" }
       };
       return;
@@ -62,7 +43,6 @@ module.exports = async function (context, req) {
 
     context.res = {
       status: 200,
-      headers: { "Content-Type": "application/json" },
       body: {
         title: result.recordset[0].Title,
         pages: result.recordset.map(r => ({
@@ -72,17 +52,10 @@ module.exports = async function (context, req) {
       }
     };
   } catch (err) {
-    context.log.error(err);
+    context.log(err);
     context.res = {
       status: 500,
-      headers: { "Content-Type": "application/json" },
       body: { error: err.message }
     };
-  } finally {
-    if (pool) {
-      try { await pool.close(); } catch {}
-    }
   }
 };
-
-
