@@ -1,29 +1,22 @@
-const bookId = 1; // or any book ID
-const apiUrl = `https://black-bush-05d70870f.4.azurestaticapps.net/api/book/${bookId}`;
+const apiUrl = "/api/books";
 
 fetch(apiUrl)
   .then(res => res.json())
-  .then(data => {
-    if (data.error) {
-      document.body.innerHTML = `<p>Error: ${data.error}</p>`;
-      return;
-    }
+  .then(books => {
+    const list = document.createElement("ul");
 
-    // Show the book title
-    const titleEl = document.createElement('h1');
-    titleEl.textContent = data.title;
-    document.body.appendChild(titleEl);
-
-    // Show each page image
-    data.pages.forEach(page => {
-      const imgEl = document.createElement('img');
-      imgEl.src = page.fileUrl;
-      imgEl.alt = `Page ${page.pageNumber}`;
-      imgEl.style.width = '100%'; // Adjust as needed
-      imgEl.style.marginBottom = '20px';
-      document.body.appendChild(imgEl);
+    books.forEach(book => {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `/book.html?bookId=${book.BookId}`; // make sure this page exists or change as needed
+      link.textContent = book.Title;
+      item.appendChild(link);
+      list.appendChild(item);
     });
+
+    document.getElementById("pages").innerHTML = ""; // clear any old content
+    document.getElementById("pages").appendChild(list);
   })
   .catch(err => {
-    document.body.innerHTML = `<p>Failed to load book: ${err.message}</p>`;
+    document.body.innerHTML = `<p>Error loading books: ${err.message}</p>`;
   });
