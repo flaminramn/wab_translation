@@ -9,21 +9,6 @@
 <body>
   <h1>Available Books</h1>
   <ul id="book-list"></ul>
-
-  <script>
-    fetch('/api/books')
-      .then(res => res.json())
-      .then(books => {
-        const list = document.getElementById('book-list');
-        books.forEach(book => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = `book.html?bookId=${book.bookId}`;
-          link.textContent = book.title;
-          li.appendChild(link);
-          list.appendChild(li);
-        });
-      });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,22 +1,13 @@
-const apiUrl = "/api/books";
-
-fetch(apiUrl)
+fetch('/api/books')
   .then(res => res.json())
   .then(books => {
-    const list = document.createElement("ul");
-
+    const list = document.getElementById('book-list');
     books.forEach(book => {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = `/book.html?bookId=${book.BookId}`; // make sure this page exists or change as needed
-      link.textContent = book.Title;
-      item.appendChild(link);
-      list.appendChild(item);
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `book.html?bookId=${book.BookId}`;
+      a.textContent = book.Title;
+      li.appendChild(a);
+      list.appendChild(li);
     });
-
-    document.getElementById("pages").innerHTML = ""; // clear any old content
-    document.getElementById("pages").appendChild(list);
-  })
-  .catch(err => {
-    document.body.innerHTML = `<p>Error loading books: ${err.message}</p>`;
   });

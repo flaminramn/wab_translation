@@ -1,5 +1,4 @@
 const sql = require("mssql");
-
 let pool;
 
 async function getPool() {
@@ -9,17 +8,8 @@ async function getPool() {
 }
 
 module.exports = async function (context, req) {
-  if (!process.env.SQL_CONNECTION_STRING) {
-    context.res = {
-      status: 500,
-      body: { error: "SQL_CONNECTION_STRING not set" }
-    };
-    return;
-  }
-
   try {
     const pool = await getPool();
-
     const result = await pool.request().query(`
       SELECT TOP 20 BookId, Title FROM dbo.Books ORDER BY Title
     `);
@@ -29,7 +19,6 @@ module.exports = async function (context, req) {
       body: result.recordset
     };
   } catch (err) {
-    context.log("SQL ERROR:", err);
     context.res = {
       status: 500,
       body: { error: err.message }

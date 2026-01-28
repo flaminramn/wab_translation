@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["get"],
-      "route": "book/id/{bookId}"
+      "route": "book/{bookId}"
     },
     {
       "type": "http",

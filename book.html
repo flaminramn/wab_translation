@@ -9,41 +9,10 @@
 <body>
     <a href="index.html">← Back to Library</a>
 
-  <h1 id="title">Loading...</h1>
-  <div id="page-nav"></div>
-  <div id="page-view"></div>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const bookId = params.get('bookId');
-    const apiUrl = `/api/book/${bookId}`;
-
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          document.getElementById('title').textContent = "Book not found";
-          return;
-        }
-
-        document.getElementById('title').textContent = data.title;
-
-        const nav = document.getElementById('page-nav');
-        const view = document.getElementById('page-view');
-
-        data.pages.forEach(page => {
-          const btn = document.createElement('button');
-          btn.textContent = page.pageNumber;
-          btn.onclick = () => {
-            view.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = page.fileUrl;
-            img.style.width = '100%';
-            view.appendChild(img);
-          };
-          nav.appendChild(btn);
-        });
-      });
-  </script>
+  <body>
+  <h1 id="title">Loading book...</h1>
+  <div id="pages"></div>
+  <script src="book.js"></script>
+</body>
 </body>
 </html>
