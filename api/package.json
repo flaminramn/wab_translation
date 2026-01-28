@@ -1,8 +1,7 @@
 {
-  "name": "api",
+  "name": "wab_translation",
   "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "mssql": "^10.0.0"
+  "scripts": {
+    "build": "echo \"No build step required\""
   }
 }
