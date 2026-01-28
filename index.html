@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Book Viewer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
+  <meta charset="UTF-8" />
+  <title>Book Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <h1 id="title">Loading…</h1>
-  <div id="pages"></div>
+  <h1>Available Books</h1>
+  <ul id="book-list"></ul>
 
-  <script src="app.js"></script>
+  <script>
+    fetch('/api/books')
+      .then(res => res.json())
+      .then(books => {
+        const list = document.getElementById('book-list');
+        books.forEach(book => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = `book.html?bookId=${book.bookId}`;
+          link.textContent = book.title;
+          li.appendChild(link);
+          list.appendChild(li);
+        });
+      });
+  </script>
 </body>
 </html>
-
