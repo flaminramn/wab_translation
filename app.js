@@ -1,32 +1,29 @@
-const bookId = 1;
+const bookId = 1; // or any book ID
+const apiUrl = `https://black-bush-05d70870f.4.azurestaticapps.net/api/book/${bookId}`;
 
-
-fetch(`https://wab-app-db-e7b9ckf2endefye3.westus2-01.azurewebsites.net/api/book/${bookId}`)
-  .then(r => {
-    if (!r.ok) {
-      throw new Error("API failed with status " + r.status);
-    }
-    return r.json();
-  })
+fetch(apiUrl)
+  .then(res => res.json())
   .then(data => {
-    if (!data || !Array.isArray(data.pages)) {
-      console.error("Invalid API response", data);
+    if (data.error) {
+      document.body.innerHTML = `<p>Error: ${data.error}</p>`;
       return;
     }
 
-    document.getElementById("title").textContent = data.title;
+    // Show the book title
+    const titleEl = document.createElement('h1');
+    titleEl.textContent = data.title;
+    document.body.appendChild(titleEl);
 
-    const container = document.getElementById("pages");
-    container.innerHTML = "";
-
-    data.pages.forEach(p => {
-      const img = document.createElement("img");
-      img.src = p.fileUrl;
-      img.loading = "lazy";
-      container.appendChild(img);
+    // Show each page image
+    data.pages.forEach(page => {
+      const imgEl = document.createElement('img');
+      imgEl.src = page.fileUrl;
+      imgEl.alt = `Page ${page.pageNumber}`;
+      imgEl.style.width = '100%'; // Adjust as needed
+      imgEl.style.marginBottom = '20px';
+      document.body.appendChild(imgEl);
     });
   })
   .catch(err => {
-    console.error(err);
+    document.body.innerHTML = `<p>Failed to load book: ${err.message}</p>`;
   });
-
