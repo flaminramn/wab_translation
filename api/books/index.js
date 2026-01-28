@@ -21,7 +21,7 @@ module.exports = async function (context, req) {
     const pool = await getPool();
 
     const result = await pool.request().query(`
-      SELECT BookId, Title FROM dbo.Books ORDER BY Title
+      SELECT TOP 20 BookId, Title FROM dbo.Books ORDER BY Title
     `);
 
     context.res = {
