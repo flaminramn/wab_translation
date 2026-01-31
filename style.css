@@ -48,6 +48,18 @@ body {
   padding-top: 56px;
 }
 
+.page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+#pages img {
+  display: block;
+  max-width: 100%;
+  margin: 16px auto;
+}
+
 
 img {
   width: 100%;
