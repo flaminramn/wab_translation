@@ -26,16 +26,28 @@ document.addEventListener("DOMContentLoaded", () => {
   titleLink.href = `book.html?bookId=${book.BookId}`;
   titleLink.textContent = book.Title || "(Untitled)";
 
-  const pdfLink = document.createElement("a");
-  pdfLink.href = `/books/${book.BookId}/searchablepdf.pdf`;
-  pdfLink.textContent = " [PDF]";
-  pdfLink.target = "_blank";
-  pdfLink.rel = "noopener";
-
   li.appendChild(titleLink);
-  li.appendChild(pdfLink);
+
+  if (book.FolderName) {
+    const pdfLink = document.createElement("a");
+
+    const baseBlobUrl = "https://wabfiles.blob.core.windows.net/wab-scans/";
+
+    pdfLink.href =
+      baseBlobUrl +
+      book.FolderName +
+      "/searchablepdf.pdf";
+
+    pdfLink.textContent = " [PDF]";
+    pdfLink.target = "_blank";
+    pdfLink.rel = "noopener";
+
+    li.appendChild(pdfLink);
+  }
+
   list.appendChild(li);
 });
+
 
 
         document.getElementById("page-number").textContent = page;
