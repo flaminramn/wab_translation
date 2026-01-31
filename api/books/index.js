@@ -9,10 +9,22 @@ async function getPool() {
 
 module.exports = async function (context, req) {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query(`
-      SELECT BookId, Title FROM dbo.Books ORDER BY Title
-    `);
+    const page = parseInt(req.query.page || "1", 10);
+    const pageSize = 25;
+    const offset = (page - 1) * pageSize;
+
+    const pool = await sql.connect(process.env.SQL_CONNECTION_STRING);
+
+    const result = await pool.request()
+      .input("offset", sql.Int, offset)
+      .input("pageSize", sql.Int, pageSize)
+      .query(`
+        SELECT BookId, Title
+        FROM dbo.Books
+        ORDER BY Title
+        OFFSET @offset ROWS
+        FETCH NEXT @pageSize ROWS ONLY
+      `);
 
     context.res = {
       status: 200,
