@@ -4,19 +4,19 @@
   },
   "routes": [
     {
+      "route": "/.auth/*",
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/",
       "allowedRoles": ["anonymous"]
     },
     {
-      "route": "/style.css",
+      "route": "/*.css",
       "allowedRoles": ["anonymous"]
     },
     {
-      "route": "/app.js",
-      "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/favicon.ico",
+      "route": "/*.js",
       "allowedRoles": ["anonymous"]
     },
     {
