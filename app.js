@@ -18,13 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         books.forEach(book => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = `book.html?bookId=${book.BookId}`;
-          a.textContent = book.Title || "(Untitled)";
-          li.appendChild(a);
-          list.appendChild(li);
-        });
+  if (!book.BookId) return;
+
+  const li = document.createElement("li");
+
+  const titleLink = document.createElement("a");
+  titleLink.href = `book.html?bookId=${book.BookId}`;
+  titleLink.textContent = book.Title || "(Untitled)";
+
+  const pdfLink = document.createElement("a");
+  pdfLink.href = `/books/${book.BookId}/searchablepdf.pdf`;
+  pdfLink.textContent = " [PDF]";
+  pdfLink.target = "_blank";
+  pdfLink.rel = "noopener";
+
+  li.appendChild(titleLink);
+  li.appendChild(pdfLink);
+  list.appendChild(li);
+});
+
 
         document.getElementById("page-number").textContent = page;
       })
