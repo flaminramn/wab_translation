@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "route": "/books/*/*.pdf",
+      "headers": {
+        "Content-Type": "application/pdf"
+      }
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/books/*/*.pdf"
+    ]
+  }
+}
