@@ -29,3 +29,28 @@ fetch('/api/books')
     document.getElementById('book-list').innerHTML = `<li>Error: ${err.message}</li>`;
   });
 
+// ===============================
+// Auth banner logic (ADD BELOW)
+// ===============================
+
+fetch("/.auth/me")
+  .then(r => r.json())
+  .then(data => {
+    const loggedIn = data.clientPrincipal !== null;
+
+    const loginLink = document.getElementById("login");
+    const logoutLink = document.getElementById("logout");
+    const userEmail = document.getElementById("user-email");
+
+    if (loginLink && logoutLink) {
+      loginLink.style.display = loggedIn ? "none" : "inline";
+      logoutLink.style.display = loggedIn ? "inline" : "none";
+    }
+
+    if (loggedIn && userEmail) {
+      userEmail.textContent = " | " + data.clientPrincipal.userDetails;
+    }
+  })
+  .catch(err => {
+    console.error("Auth check failed:", err);
+  });
