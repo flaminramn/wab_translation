@@ -8,6 +8,18 @@
       "allowedRoles": ["anonymous"]
     },
     {
+      "route": "/style.css",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/app.js",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/favicon.ico",
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/api/*",
       "allowedRoles": ["anonymous"]
     },
