@@ -28,22 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   li.appendChild(titleLink);
 
-  if (book.FolderName) {
-    const pdfLink = document.createElement("a");
+  if (book.PdfUrl) {
+  const pdfLink = document.createElement("a");
 
-    const baseBlobUrl = "https://wabfiles.blob.core.windows.net/wab-scans/";
+  pdfLink.href = book.PdfUrl;
+  pdfLink.textContent = " [PDF]";
+  pdfLink.target = "_blank";
+  pdfLink.rel = "noopener";
 
-    pdfLink.href =
-      baseBlobUrl +
-      book.FolderName +
-      "/searchablepdf.pdf";
+  li.appendChild(pdfLink);
+}
 
-    pdfLink.textContent = " [PDF]";
-    pdfLink.target = "_blank";
-    pdfLink.rel = "noopener";
-
-    li.appendChild(pdfLink);
-  }
 
   list.appendChild(li);
 });

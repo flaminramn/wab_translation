@@ -19,7 +19,7 @@ module.exports = async function (context, req) {
       .input("offset", sql.Int, offset)
       .input("pageSize", sql.Int, pageSize)
       .query(`
-        SELECT BookId, Title, PdfPath
+        SELECT BookId, Title, PdfUrl
         FROM dbo.Books
         ORDER BY Title
         OFFSET @offset ROWS
