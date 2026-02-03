@@ -6,7 +6,7 @@ if (!bookId) {
   throw new Error("Missing bookId");
 }
 
-fetch(`/api/book?bookId=${bookId}`)
+fetch(`/api/book/${bookId}`)
   .then(res => {
     if (!res.ok) {
       throw new Error("API error " + res.status);
