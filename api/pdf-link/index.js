@@ -1,5 +1,7 @@
 const { BlobServiceClient, StorageSharedKeyCredential } = require("@azure/storage-blob");
 const sql = require("mssql");
+context.log("pdf-link function loaded");
+
 
 module.exports = async function (context, req) {
   // 1. Require login
