@@ -3,7 +3,7 @@ const sql = require("mssql");
 
 
 module.exports = async function (context, req) {
-    context.log("pdf-link invoked");
+    context.log("pdflink invoked");
   // 1. Require login
   if (!req.headers["x-ms-client-principal"]) {
     context.res = { status: 401, body: "Not authenticated" };
