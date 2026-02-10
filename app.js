@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pdfLink.addEventListener("click", e => {
               e.preventDefault();
 
-              fetch(`/api/pdf-link?bookId=${book.BookId}`)
+              fetch(`/api/pdflink?bookId=${book.BookId}`)
                 .then(r => r.json())
                 .then(d => {
                   if (!d.url) {
