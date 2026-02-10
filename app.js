@@ -18,34 +18,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         books.forEach(book => {
-  if (!book.BookId) return;
+          if (!book.BookId) return;
 
-  const li = document.createElement("li");
+          const li = document.createElement("li");
 
-  const titleLink = document.createElement("a");
-  titleLink.href = `book.html?bookId=${book.BookId}`;
-  titleLink.textContent = book.Title || "(Untitled)";
+          // Title link (images page)
+          const titleLink = document.createElement("a");
+          titleLink.href = `book.html?bookId=${book.BookId}`;
+          titleLink.textContent = book.Title || "(Untitled)";
+          li.appendChild(titleLink);
 
-  li.appendChild(titleLink);
+          // PDF link (protected via SAS)
+          if (book.PdfUrl) {
+            const pdfLink = document.createElement("a");
+            pdfLink.href = "#";
+            pdfLink.textContent = " [PDF]";
+            pdfLink.rel = "noopener";
 
-  if (book.PdfUrl) {
-  const pdfLink = document.createElement("a");
+            pdfLink.addEventListener("click", e => {
+              e.preventDefault();
 
-  pdfLink.href = book.PdfUrl;
-  pdfLink.textContent = " [PDF]";
-  pdfLink.target = "_blank";
-  pdfLink.rel = "noopener";
+              fetch(`/api/pdf-link?bookId=${book.BookId}`)
+                .then(r => r.json())
+                .then(d => {
+                  if (!d.url) {
+                    alert("PDF unavailable");
+                    return;
+                  }
+                  window.open(d.url, "_blank");
+                })
+                .catch(err => {
+                  console.error(err);
+                  alert("Unable to open PDF");
+                });
+            });
 
-  li.appendChild(pdfLink);
-}
+            li.appendChild(pdfLink);
+          }
 
+          // IMPORTANT: add the row to the list
+          list.appendChild(li);
+        });
 
-  list.appendChild(li);
-});
-
-
-
-        document.getElementById("page-number").textContent = page;
+        // IMPORTANT: update page number ONCE, after loop
+        const pageNumber = document.getElementById("page-number");
+        if (pageNumber) {
+          pageNumber.textContent = page;
+        }
       })
       .catch(err => {
         document.getElementById("book-list").innerHTML =
@@ -56,45 +75,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("next");
   const prevBtn = document.getElementById("prev");
 
-  nextBtn.addEventListener("click", () => {
-    currentPage += 1;
-    loadBooks(currentPage);
-  });
-
-  prevBtn.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage -= 1;
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      currentPage += 1;
       loadBooks(currentPage);
-    }
-  });
+    });
+  }
 
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        loadBooks(currentPage);
+      }
+    });
+  }
+
+  // Initial load
   loadBooks(currentPage);
 });
-
-
-
-// ===============================
-// Auth banner logic (ADD BELOW)
-// ===============================
-
-fetch("/.auth/me")
-  .then(r => r.json())
-  .then(data => {
-    const loggedIn = data.clientPrincipal !== null;
-
-    const loginLink = document.getElementById("login");
-    const logoutLink = document.getElementById("logout");
-    const userEmail = document.getElementById("user-email");
-
-    if (loginLink && logoutLink) {
-      loginLink.style.display = loggedIn ? "none" : "inline";
-      logoutLink.style.display = loggedIn ? "inline" : "none";
-    }
-
-    if (loggedIn && userEmail) {
-      userEmail.textContent = " | " + data.clientPrincipal.userDetails;
-    }
-  })
-  .catch(err => {
-    console.error("Auth check failed:", err);
-  });
