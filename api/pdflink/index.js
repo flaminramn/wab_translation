@@ -7,6 +7,7 @@ const {
 } = require("@azure/storage-blob");
 
 module.exports = async function (context, req) {
+  context.log("bindingData:", context.bindingData);
   const bookId = context.bindingData.bookId;
 
   if (!bookId) {
