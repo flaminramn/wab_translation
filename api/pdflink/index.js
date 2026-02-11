@@ -1,64 +1,65 @@
-const { BlobServiceClient, StorageSharedKeyCredential } = require("@azure/storage-blob");
 const sql = require("mssql");
-
+const {
+  BlobServiceClient,
+  StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
+  BlobSASPermissions
+} = require("@azure/storage-blob");
 
 module.exports = async function (context, req) {
-    context.log("pdflink invoked");
-  // 1. Require login
-  if (!req.headers["x-ms-client-principal"]) {
-    context.res = { status: 401, body: "Not authenticated" };
-    return;
-  }
+  const bookId = context.bindingData.bookId;
 
-  const bookId = req.query.bookId;
   if (!bookId) {
-    context.res = { status: 400, body: "bookId required" };
+    context.res = { status: 400 };
     return;
   }
 
-  // 2. DB lookup
-  const pool = await sql.connect(process.env.SQL_CONNECTION_STRING);
+  const conn = process.env.SQL_CONNECTION_STRING;
+  const accountName = process.env.STORAGE_ACCOUNT_NAME;
+  const accountKey = process.env.STORAGE_ACCOUNT_KEY;
+  const containerName = process.env.STORAGE_CONTAINER_NAME;
+
+  const pool = await sql.connect(conn);
 
   const result = await pool.request()
     .input("BookId", sql.Int, bookId)
     .query(`
-      SELECT FolderName
+      SELECT PdfPath
       FROM dbo.Books
       WHERE BookId = @BookId
     `);
 
-  if (!result.recordset.length) {
-    context.res = { status: 404, body: "Book not found" };
+  if (result.recordset.length === 0) {
+    context.res = { status: 404 };
     return;
   }
 
-  const folderName = result.recordset[0].FolderName;
+  const pdfUrl = result.recordset[0].PdfPath;
+  const url = new URL(pdfUrl);
 
-  // 3. Blob info
-  const containerName = "wab-scans";
-  const blobName = `${FolderName}/searchablepdf.pdf`;
+  const blobName = url.pathname.replace(`/${containerName}/`, "");
 
-  // 4. Build SAS
-  const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING;
-  const blobServiceClient = BlobServiceClient.fromConnectionString(connStr);
-
-  const accountName = blobServiceClient.accountName;
-  const credential = blobServiceClient.credential;
+  const credential = new StorageSharedKeyCredential(accountName, accountKey);
 
   const expiresOn = new Date();
-  expiresOn.setMinutes(expiresOn.getMinutes() + 10); // 10-minute access
+  expiresOn.setMinutes(expiresOn.getMinutes() + 10);
 
-  const sasUrl = await blobServiceClient
-    .getContainerClient(containerName)
-    .getBlobClient(blobName)
-    .generateSasUrl({
-      permissions: "r",
+  const sas = generateBlobSASQueryParameters(
+    {
+      containerName,
+      blobName,
+      permissions: BlobSASPermissions.parse("r"),
       expiresOn
-    });
+    },
+    credential
+  ).toString();
 
-  // 5. Return signed link
+  const signedUrl = `${pdfUrl}?${sas}`;
+
   context.res = {
-    status: 200,
-    body: { url: sasUrl }
+    status: 302,
+    headers: {
+      Location: signedUrl
+    }
   };
 };
