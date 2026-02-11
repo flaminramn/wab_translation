@@ -36,7 +36,7 @@ module.exports = async function (context, req) {
 
   // 3. Blob info
   const containerName = "wab-scans";
-  const blobName = `${folderName}/searchablepdf.pdf`;
+  const blobName = `${FolderName}/searchablepdf.pdf`;
 
   // 4. Build SAS
   const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING;
