@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
           titleLink.textContent = book.Title || "(Untitled)";
           li.appendChild(titleLink);
 
-          // PDF link (protected via SAS)
+          // PDF link
           if (book.PdfUrl) {
             const pdfLink = document.createElement("a");
             pdfLink.href = "#";
@@ -37,30 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pdfLink.addEventListener("click", e => {
               e.preventDefault();
-
-              fetch(`/api/pdflink?bookId=${book.BookId}`)
-                .then(r => r.json())
-                .then(d => {
-                  if (!d.url) {
-                    alert("PDF unavailable");
-                    return;
-                  }
-                  window.open(d.url, "_blank");
-                })
-                .catch(err => {
-                  console.error(err);
-                  alert("Unable to open PDF");
-                });
+              window.open(`/api/pdflink/${book.BookId}`, "_blank");
             });
 
             li.appendChild(pdfLink);
           }
 
-          // IMPORTANT: add the row to the list
           list.appendChild(li);
         });
 
-        // IMPORTANT: update page number ONCE, after loop
         const pageNumber = document.getElementById("page-number");
         if (pageNumber) {
           pageNumber.textContent = page;
@@ -91,6 +76,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initial load
   loadBooks(currentPage);
 });
