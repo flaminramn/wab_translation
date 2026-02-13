@@ -35,9 +35,16 @@ module.exports = async function (context, req) {
   }
 
   const pdfUrl = result.recordset[0].PdfUrl;
-  const url = new URL(pdfUrl);
-  const rawPath = url.pathname.replace(`/${containerName}/`, "");
-  const blobName = decodeURIComponent(rawPath);
+  
+  const containerPath = `/${containerName}/`;
+  const containerIndex = pdfUrl.indexOf(containerPath);
+
+  if (containerIndex === -1) {
+    throw new Error("Container path not found in URL");
+  }
+
+  const rawBlobName = pdfUrl.substring(containerIndex + containerPath.length);
+  const blobName = decodeURIComponent(rawBlobName);
 
   const credential = new StorageSharedKeyCredential(accountName, accountKey);
 
