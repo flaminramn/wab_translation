@@ -36,7 +36,8 @@ module.exports = async function (context, req) {
 
   const pdfUrl = result.recordset[0].PdfUrl;
   const url = new URL(pdfUrl);
-  const blobName = url.pathname.replace(`/${containerName}/`, "");
+  const rawPath = url.pathname.replace(`/${containerName}/`, "");
+  const blobName = decodeURIComponent(rawPath);
 
   const credential = new StorageSharedKeyCredential(accountName, accountKey);
 
