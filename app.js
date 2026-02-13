@@ -37,8 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pdfLink.addEventListener("click", e => {
               e.preventDefault();
-              window.open(`/api/pdflink/${book.BookId}`, "_blank");
+              window.open(`/api/pdflink?bookId=${book.BookId}`, "_blank");
             });
+
 
             li.appendChild(pdfLink);
           }
