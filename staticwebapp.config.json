@@ -1,31 +1,16 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html"
-  },
   "routes": [
     {
-      "route": "/.auth/*",
+      "route": "/login.html",
       "allowedRoles": ["anonymous"]
     },
     {
-      "route": "/",
-      "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/*.css",
-      "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/*.js",
-      "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/api/*",
+      "route": "/api/login",
       "allowedRoles": ["anonymous"]
     },
     {
       "route": "/*",
-      "allowedRoles": ["reader"]
+      "allowedRoles": ["authenticated"]
     }
   ]
 }
