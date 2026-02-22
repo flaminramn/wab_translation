@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pdfLink.addEventListener("click", e => {
               e.preventDefault();
-              window.open(`/api/pdflink?bookId=${book.BookId}`, "_blank");
+              window.open(book.PdfUrl, "_blank");
             });
 
 
