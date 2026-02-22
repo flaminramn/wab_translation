@@ -1,5 +1,8 @@
 console.log("app.js loaded");
-
+if (!document.cookie.includes("siteAuth=true") &&
+    !window.location.pathname.includes("login.html")) {
+  window.location.href = "/login.html";
+}
 document.addEventListener("DOMContentLoaded", () => {
 
   let currentPage = 1;
