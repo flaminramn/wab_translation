@@ -1,9 +1,12 @@
 console.log("app.js loaded");
-if (!document.cookie.includes("siteAuth=true") &&
-    !window.location.pathname.includes("login.html")) {
-  window.location.href = "/login.html";
-}
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  if (!document.cookie.includes("siteAuth=true") &&
+      !window.location.pathname.includes("login.html")) {
+    window.location.href = "/login.html";
+    return;
+  }
 
   let currentPage = 1;
   const pageSize = 25;
