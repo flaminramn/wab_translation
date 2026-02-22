@@ -9,21 +9,29 @@
   <button onclick="login()">Login</button>
 
   <script>
-    async function login() {
-      const password = document.getElementById("pw").value;
+  const input = document.getElementById("pw");
 
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password })
-      });
-
-      if (res.ok) {
-        window.location.href = "/";
-      } else {
-        alert("Wrong password");
-      }
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      login();
     }
-  </script>
+  });
+
+  async function login() {
+    const password = input.value;
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+
+    if (res.ok) {
+      window.location.href = "/";
+    } else {
+      alert("Wrong password");
+    }
+  }
+</script>
 </body>
 </html>
