@@ -13,10 +13,10 @@ module.exports = async function (context, req) {
   }
 
   context.res = {
-    status: 200,
-    headers: {
-      "Set-Cookie": "siteAuth=true; HttpOnly; Secure; SameSite=Strict; Path=/"
-    },
-    body: "Authenticated"
-  };
+  status: 200,
+  headers: {
+    "Set-Cookie": "siteAuth=true; Path=/; Secure; SameSite=Lax"
+  },
+  body: "Authenticated"
+};
 };
