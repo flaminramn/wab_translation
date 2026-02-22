@@ -7,10 +7,6 @@
     {
       "route": "/api/login",
       "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/*",
-      "allowedRoles": ["authenticated"]
     }
   ]
 }
