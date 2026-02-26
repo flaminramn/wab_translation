@@ -18,16 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadBooks(page) {
     fetch(`/api/books?page=${page}`)
       .then(res => res.json())
-      .then(books => {
+      .then(data => {
         const list = document.getElementById("book-list");
         list.innerHTML = "";
 
-        if (!Array.isArray(books)) {
-          list.innerHTML = "<li>Unexpected data format</li>";
-          return;
-        }
+  if (!Array.isArray(data.books)) {
+    list.innerHTML = "<li>Unexpected data format</li>";
+    return;
+  }
 
-        books.forEach(book => {
+        data.books.forEach(book => {
           if (!book.BookId) return;
 
           const li = document.createElement("li");
